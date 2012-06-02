@@ -167,6 +167,14 @@ class SuperColumnFamily extends ColumnFamily {
     }
 
     /**
+     * The add operation takes an extra parameter in Super Column Families, 
+     * please, use addSuper instead of add.
+     */
+    public function add($key, $column, $value=1, $consistency_level=null) {
+    	throw new \Exception('Add not supported for SuperColumnFamily, please use addSuper.');
+    }
+    
+    /**
      * Increment or decrement a counter.
      *
      * `value` should be an integer, either positive or negative, to be added
@@ -186,7 +194,7 @@ class SuperColumnFamily extends ColumnFamily {
      * @param ConsistencyLevel $consistency_level affects the guaranteed
      *        number of nodes that must respond before the operation returns
      */
-    public function add($key, $super_column, $column, $value=1,
+    public function addSuper($key, $super_column, $column, $value=1,
                         $consistency_level=null) {
         $packed_key = $this->pack_key($key);
         $cp = $this->create_column_parent($super_column);
@@ -196,6 +204,7 @@ class SuperColumnFamily extends ColumnFamily {
         return $this->pool->call("add", $packed_key, $cp, $counter,
             $this->wcl($consistency_level));
     }
+    
 
     /**
      * Remove a super column from a row or a set of subcolumns from
